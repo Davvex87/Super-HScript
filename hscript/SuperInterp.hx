@@ -186,7 +186,7 @@ class SuperInterp extends ReInterp
 		switch( #if hscriptPos x #else e #end )
 		{
 			case EIdent(id):
-				var val =  super.expr(e);
+				var val:Dynamic =  super.expr(e);
 				if (blacklist.contains(val))
 					error(ECustom('Blacklisted expression $val referenced'));
 			case _:

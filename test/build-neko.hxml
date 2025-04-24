@@ -1,2 +1,2 @@
 test/build-base.hxml
---interp
+--neko test/Build.n
