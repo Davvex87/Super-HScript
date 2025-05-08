@@ -75,24 +75,24 @@ class TestHScriptFeatures implements ITest
 
 	function testOptionalChaining()
 	{
-        Assert.equals('ok', evalExpr('var a = { f: "ok" }; a?.f;'));
-        Assert.isNull(evalExpr('var a = null; a?.f;'));
-    }
+		Assert.equals('ok', evalExpr('var a = { f: "ok" }; a?.f;'));
+		Assert.isNull(evalExpr('var a = null; a?.f;'));
+	}
 
 	function testFields()
-		{
-			Assert.equals(5.5, evalExpr("TestObj.myVar;", ["TestObj"=>TestObj]));
-			Assert.equals("3 apples", evalExpr("TestObj.testFunc(3, 'apple');", ["TestObj"=>TestObj]));
-			Assert.equals(2, evalExpr("var t = new TestObj(); t.secretCode[2];", ["TestObj"=>TestObj]));
-			Assert.equals("SECRET_CODE", evalExpr("var t = new TestObj(); t.getRecovery();", ["TestObj"=>TestObj]));
+	{
+		Assert.equals(5.5, evalExpr("TestObj.myVar;", ["TestObj"=>TestObj]));
+		Assert.equals("3 apples", evalExpr("TestObj.testFunc(3, 'apple');", ["TestObj"=>TestObj]));
+		Assert.equals(2, evalExpr("var t = new TestObj(); t.secretCode[2];", ["TestObj"=>TestObj]));
+		Assert.equals("SECRET_CODE", evalExpr("var t = new TestObj(); t.getRecovery();", ["TestObj"=>TestObj]));
 
-			var obj:Dynamic = evalExpr("return { n1: 5, others: {o1: true, o2: 'NO!'}}");
+		var obj:Dynamic = evalExpr("return { n1: 5, others: {o1: true, o2: 'NO!'}}");
 
-			Assert.equals(5, obj.n1);
-			Assert.isTrue(obj.others.o1);
-			evalExpr("obj.others.o2 = 'YES!'", ["obj"=>obj]);
-			Assert.equals("YES!", obj.others.o2);
-		}
+		Assert.equals(5, obj.n1);
+		Assert.isTrue(obj.others.o1);
+		evalExpr("obj.others.o2 = 'YES!'", ["obj"=>obj]);
+		Assert.equals("YES!", obj.others.o2);
+	}
 
 	function testFunctions()
 	{
