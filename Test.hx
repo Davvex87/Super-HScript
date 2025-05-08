@@ -22,7 +22,7 @@ class TestHScriptFeatures implements ITest
 {
 	public function new() {}
 
-	private function evalExpr(expr:String, ?params:Array<Dynamic>):Dynamic
+	private function evalExpr(expr:String, ?vars: Map<String, Dynamic>, ?params:Array<Dynamic>):Dynamic
 	{
 		var parser = new SuperParser();
 		var interp = new SuperInterp();
@@ -31,6 +31,14 @@ class TestHScriptFeatures implements ITest
 
 		if (params != null)
 			interp.variables.set("params", params);
+
+		if (vars != null)
+		{
+			for (key => value in vars)
+			{
+				interp.variables.set(key, value);
+			}
+		}
 
 		return interp.execute(program);
 	}
@@ -70,9 +78,71 @@ class TestHScriptFeatures implements ITest
         Assert.equals('ok', evalExpr('var a = { f: "ok" }; a?.f;'));
         Assert.isNull(evalExpr('var a = null; a?.f;'));
     }
+
+	function testFields()
+		{
+			Assert.equals(5.5, evalExpr("TestObj.myVar;", ["TestObj"=>TestObj]));
+			Assert.equals("3 apples", evalExpr("TestObj.testFunc(3, 'apple');", ["TestObj"=>TestObj]));
+			Assert.equals(2, evalExpr("var t = new TestObj(); t.secretCode[2];", ["TestObj"=>TestObj]));
+			Assert.equals("SECRET_CODE", evalExpr("var t = new TestObj(); t.getRecovery();", ["TestObj"=>TestObj]));
+
+			var obj:Dynamic = evalExpr("return { n1: 5, others: {o1: true, o2: 'NO!'}}");
+
+			Assert.equals(5, obj.n1);
+			Assert.isTrue(obj.others.o1);
+			evalExpr("obj.others.o2 = 'YES!'", ["obj"=>obj]);
+			Assert.equals("YES!", obj.others.o2);
+		}
+
+	function testFunctions()
+	{
+		var fn:Dynamic = evalExpr('function(arg1, num) { return arg1 + num; }');
+		if (Type.typeof(fn) == Type.ValueType.TFunction)
+			Assert.pass("fn correctly declared as a function");
+		else 
+			Assert.fail("fn test failed, function not declared");
+
+		Assert.equals(7, fn(3, 4));
+		Assert.equals("Hi", fn("H", "i"));
+
+		var fn2:Dynamic = evalExpr('function(obj) {obj.a = true; obj.n.b += 3;}');
+		if (Type.typeof(fn2) == Type.ValueType.TFunction)
+			Assert.pass("fn2 correctly declared as a function");
+		else 
+			Assert.fail("fn2 test failed, function not declared");
+
+		var obj = {
+			a: false,
+			n: {
+				b: 2
+			}
+		}
+
+		fn2(obj);
+
+		Assert.isTrue(obj.a);
+		Assert.equals(5, obj.n.b);
+	}
 }
 
 class TestHScriptOOP
 {
 	public function new() {}
+}
+
+class TestObj
+{
+	public static var myVar:Float = 5.5;
+	public static function testFunc(num:Int, fruit:String)
+	{
+		return '$num ${fruit}s';
+	}
+
+	public function new() {}
+
+	public var secretCode:Array<Int> = [4,3,2,1];
+	public function getRecovery()
+	{
+		return "SECRET_CODE";
+	}
 }
