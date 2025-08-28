@@ -38,18 +38,23 @@ class ParserMacro
 
 				function makeEnumField(name, kind):Field
 				{
-					return {
+					for (f in fields)
+						if (f.name == name)
+							return null;
+
+					var field:Field = {
 						name: name,
 						doc: null,
 						meta: [],
 						access: [],
 						kind: kind,
 						pos: Context.currentPos()
-					}
+					};
+					fields.push(field);
+					return field;
 				}
-				fields.push(
-					makeEnumField("TApostr", FVar(null, null))
-				);
+
+				makeEnumField("TApostr", FVar(null, null));
 			case _:
 		}
 

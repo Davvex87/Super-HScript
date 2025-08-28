@@ -1,0 +1,7 @@
+extraParams.hxml
+-m Test
+-lib utest
+-cp test/source
+
+-D no-deprecation-warnings
+-D no-invalid-expression-warnings

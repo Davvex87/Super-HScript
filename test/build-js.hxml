@@ -1,2 +1,2 @@
 test/build-base.hxml
---interp
+--js test/Build.js
